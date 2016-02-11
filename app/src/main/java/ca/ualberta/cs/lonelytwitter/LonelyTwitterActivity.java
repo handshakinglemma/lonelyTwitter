@@ -42,7 +42,7 @@ public class LonelyTwitterActivity extends Activity {
 	}
 
 	private ArrayAdapter<Tweet> adapter;
-	
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -69,7 +69,10 @@ public class LonelyTwitterActivity extends Activity {
 
 				//
 				//
-
+				Intent intent = new Intent(LonelyTwitterActivity.this, IntentReaderActivity.class);
+				intent.putExtra(IntentReaderActivity.TEXT_TO_TRANSFORM_KEY, "message 2");
+				intent.putExtra(IntentReaderActivity.MODE_OF_TRANSFORM_KEY, IntentReaderActivity.NORMAL);
+				startActivity(intent);
 				//
 				//
 			}
@@ -105,7 +108,7 @@ public class LonelyTwitterActivity extends Activity {
 			throw new RuntimeException();
 		}
 	}
-	
+
 	private void saveInFile() {
 		try {
 			FileOutputStream fos = openFileOutput(FILENAME,
