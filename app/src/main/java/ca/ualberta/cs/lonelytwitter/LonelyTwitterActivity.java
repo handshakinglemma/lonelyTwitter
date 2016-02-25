@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 public class LonelyTwitterActivity extends Activity {
 
@@ -28,10 +29,10 @@ public class LonelyTwitterActivity extends Activity {
     private EditText bodyText;
     private ListView oldTweetsList;
 
-    private ArrayList<Tweet> tweets = new ArrayList<Tweet>();
-    private ArrayAdapter<Tweet> adapter;
+    private ArrayList<NormalTweet> tweets = new ArrayList<NormalTweet>();
+    private ArrayAdapter<NormalTweet> adapter;
 
-    public ArrayAdapter<Tweet> getAdapter() {
+    public ArrayAdapter<NormalTweet> getAdapter() {
         return adapter;
     }
 
@@ -51,13 +52,16 @@ public class LonelyTwitterActivity extends Activity {
 
             public void onClick(View v) {
                 String text = bodyText.getText().toString();
-                Tweet latestTweet = new NormalTweet(text);
+                NormalTweet latestTweet = new NormalTweet(text);
 
                 tweets.add(latestTweet);
                 adapter.notifyDataSetChanged();
 
                 // TODO: Replace with Elasticsearch
-                saveInFile();
+                ElasticsearchTweetController.AddTweetTask addTweetTask = new ElasticsearchTweetController.AddTweetTask();
+                addTweetTask.execute(latestTweet);
+                //ElasticsearchTweetController.addTweet(latestTweet);
+                //saveInFile();
 
                 setResult(RESULT_OK);
             }
@@ -70,10 +74,21 @@ public class LonelyTwitterActivity extends Activity {
 
         // Get latest tweets
         // TODO: Replace with Elasticsearch
-        loadFromFile();
+        ElasticsearchTweetController.GetTweetsTask getTweetsTask = new ElasticsearchTweetController.GetTweetsTask();
+        getTweetsTask.execute("");
+        try {
+            tweets = new ArrayList<NormalTweet>();
+            tweets.addAll(getTweetsTask.get());
+            tweets = getTweetsTask.get();
+        } catch(InterruptedException e) {
+            e.printStackTrace();
+        } catch(ExecutionException e) {
+            e.printStackTrace();
+        }
+        //loadFromFile();
 
         // Binds tweet list with view, so when our array updates, the view updates with it
-        adapter = new ArrayAdapter<Tweet>(this, R.layout.list_item, tweets);
+        adapter = new ArrayAdapter<NormalTweet>(this, R.layout.list_item, tweets);
         oldTweetsList.setAdapter(adapter);
     }
 
@@ -84,13 +99,13 @@ public class LonelyTwitterActivity extends Activity {
             Gson gson = new Gson();
 
             // Took from https://google-gson.googlecode.com/svn/trunk/gson/docs/javadocs/com/google/gson/Gson.html 01-19 2016
-            Type listType = new TypeToken<ArrayList<NormalTweet>>() {
+            Type listType = new TypeToken<ArrayList<Tweet>>() {
             }.getType();
             tweets = gson.fromJson(in, listType);
 
         } catch (FileNotFoundException e) {
             // TODO Auto-generated catch block
-            tweets = new ArrayList<Tweet>();
+            tweets = new ArrayList<NormalTweet>();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             throw new RuntimeException();
