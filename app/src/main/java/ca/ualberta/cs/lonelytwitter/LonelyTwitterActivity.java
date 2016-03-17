@@ -72,8 +72,12 @@ public class LonelyTwitterActivity extends Activity {
 
                 // Add the tweet to Elasticsearch
                 ElasticsearchTweetController.AddTweetTask addTweetTask = new ElasticsearchTweetController.AddTweetTask();
-                //ElasticsearchTweetController.doInBackground(tweets);
                 addTweetTask.execute(latestTweet);
+
+                // Trying to sort tweets again after adding new tweet. Doesn't work.
+                //ElasticsearchTweetController.GetTweetsTask getTweetsTask = new ElasticsearchTweetController.GetTweetsTask();
+                // getTweetsTask returns an array of NormalTweets, but this class is working with Tweets
+                //getTweetsTask.doInBackground();
 
                 bodyText.setText("");
                 pictureButton.setImageResource(android.R.color.transparent);
