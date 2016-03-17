@@ -43,10 +43,15 @@ public class ElasticsearchTweetController {
             // The following orders the results by date
             //String search_string = "{\"sort\": { \"date\": { \"order\": \"desc\" }}}";
 
-            /* NEW! */
+            /**
+             * When getting help with getting the Elasticsearch camera branch for this lab, I got
+             * a version with the above comments already in it. So I used the comments and this site:
+             * https://www.elastic.co/guide/en/elasticsearch/guide/current/_sorting.html on March 17/16
+             * to do this assignment.
+             */
             String search_string;
             if(params[0] == "") {
-                search_string = "{\"from\":0,\"size\":10000}";
+                search_string = "{\"sort\": { \"date\": { \"order\": \"desc\" }}}";
             } else {
                 // The following gets the top 10000 tweets matching the string passed in
                 search_string = "{\"from\":0,\"size\":10000,\"query\":{\"match\":{\"message\":\"" + params[0] + "\"}}}";

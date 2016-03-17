@@ -72,6 +72,7 @@ public class LonelyTwitterActivity extends Activity {
 
                 // Add the tweet to Elasticsearch
                 ElasticsearchTweetController.AddTweetTask addTweetTask = new ElasticsearchTweetController.AddTweetTask();
+                //ElasticsearchTweetController.doInBackground(tweets);
                 addTweetTask.execute(latestTweet);
 
                 bodyText.setText("");

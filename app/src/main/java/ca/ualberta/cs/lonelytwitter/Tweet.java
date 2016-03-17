@@ -29,6 +29,9 @@ public abstract class Tweet {
     protected transient Bitmap thumbnail;
     protected String thumbnailBase64;
 
+    //protected transient Bitmap thumbnail;
+    //protected String thumbnailBase64;
+
     public Tweet(Date date, String message, Bitmap thumbnail) {
         this.date = date;
         this.message = message;
@@ -83,9 +86,11 @@ public abstract class Tweet {
         if (newThumbnail != null) {
             thumbnail = newThumbnail;
 
+            // converting image to JSON object
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             newThumbnail.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
 
+            // defining byte array and encoding thumbnail into a string
             byte[] b = byteArrayOutputStream.toByteArray();
             thumbnailBase64 = Base64.encodeToString(b, Base64.DEFAULT);
         }
@@ -94,6 +99,7 @@ public abstract class Tweet {
     public Bitmap getThumbnail(){
         if (thumbnail == null && thumbnailBase64 != null){
             byte[] decodeString = Base64.decode(thumbnailBase64, Base64.DEFAULT);
+            // start at beginning of thumbnail and decode until end
             thumbnail = BitmapFactory.decodeByteArray(decodeString, 0, decodeString.length);
         }
         return thumbnail;
